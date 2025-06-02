@@ -2,18 +2,9 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Merchant Map - Galli</title>
+  <title>Merchant Map</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Leaflet CSS & JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- Leaflet Marker Cluster CSS & JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
   <style>
     html, body, #map {
       height: 100%;
@@ -24,36 +15,41 @@
 </head>
 <body>
   <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
   <script>
-    const map = L.map('map').setView([27.7, 85.3], 12); // Adjust center/zoom as needed
+    const map = L.map('map').setView([27.7, 85.3], 12);
 
     // Galli basemap
     L.tileLayer('https://map-init.gallimap.com/styles/light/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© Galli Maps'
+      attribution: '&copy; Galli Maps'
     }).addTo(map);
 
+    // Cluster group
     const markers = L.markerClusterGroup();
 
+    // Load GeoJSON
     fetch('merchant.geojson')
-      .then(res => res.json())
+      .then(response => response.json())
       .then(data => {
-        const geoLayer = L.geoJSON(data, {
+        const geojsonLayer = L.geoJSON(data, {
           onEachFeature: (feature, layer) => {
-            let popupContent = "";
-            for (let key in feature.properties) {
-              popupContent += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            if (feature.properties) {
+              let popup = '';
+              for (const key in feature.properties) {
+                popup += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+              }
+              layer.bindPopup(popup);
             }
-            layer.bindPopup(popupContent);
           }
         });
-        markers.addLayer(geoLayer);
+        markers.addLayer(geojsonLayer);
         map.addLayer(markers);
         map.fitBounds(markers.getBounds());
-      })
-      .catch(err => {
-        alert("Error loading GeoJSON: " + err);
-        console.error(err);
       });
   </script>
 </body>
