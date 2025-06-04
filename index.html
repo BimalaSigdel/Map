@@ -90,7 +90,9 @@
 
       // Add heatmap by default
       map.addLayer(heatLayer);
-      map.fitBounds(clusterLayer.getBounds());
+
+      // Fit bounds based on all features
+      map.fitBounds(geoLayer.getBounds());
 
       // Create dropdown and add to map control area
       const dropdownControl = L.control({ position: 'topright' });
@@ -113,11 +115,11 @@
       // Switch layers
       document.getElementById('layerSelect').addEventListener('change', function () {
         if (this.value === 'heatmap') {
-          map.removeLayer(clusterLayer);
-          map.addLayer(heatLayer);
+          if (map.hasLayer(clusterLayer)) map.removeLayer(clusterLayer);
+          if (!map.hasLayer(heatLayer)) map.addLayer(heatLayer);
         } else {
-          map.removeLayer(heatLayer);
-          map.addLayer(clusterLayer);
+          if (map.hasLayer(heatLayer)) map.removeLayer(heatLayer);
+          if (!map.hasLayer(clusterLayer)) map.addLayer(clusterLayer);
         }
       });
     })
