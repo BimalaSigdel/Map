@@ -23,10 +23,9 @@
   <script>
     const map = L.map('map').setView([27.7, 85.3], 12);
 
-    L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
+    L.tileLayer('https://map-init.gallimap.com/styles/light/{z}/{x}/{y}.png', {
+      attribution: '&copy; Galli Maps'
+    }).addTo(map);
 
     const markers = L.markerClusterGroup();
 
