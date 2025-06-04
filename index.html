@@ -8,6 +8,7 @@
   <!-- Leaflet CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 
   <!-- Leaflet Marker Cluster CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
@@ -24,37 +25,38 @@
 </head>
 <body>
   <div id="map"></div>
-  <script>
-    const map = L.map('map').setView([27.7, 85.3], 12); // Adjust center/zoom as needed
+<script>
+  const map = L.map('map').setView([27.7, 85.3], 12);
 
-    // Galli basemap
-    L.tileLayer('https://map-init.gallimap.com/styles/light/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© Galli Maps'
-    }).addTo(map);
+  // Galli basemap
+  L.tileLayer('https://map-init.gallimap.com/styles/light/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© Galli Maps'
+  }).addTo(map);
 
-    const markers = L.markerClusterGroup();
-
-    fetch('merchant.geojson')
-      .then(res => res.json())
-      .then(data => {
-        const geoLayer = L.geoJSON(data, {
-          onEachFeature: (feature, layer) => {
-            let popupContent = "";
-            for (let key in feature.properties) {
-              popupContent += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
-            }
-            layer.bindPopup(popupContent);
-          }
-        });
-        markers.addLayer(geoLayer);
-        map.addLayer(markers);
-        map.fitBounds(markers.getBounds());
-      })
-      .catch(err => {
-        alert("Error loading GeoJSON: " + err);
-        console.error(err);
+  fetch('merchant.geojson')
+    .then(res => res.json())
+    .then(data => {
+      const heatData = data.features.map(f => {
+        const [lng, lat] = f.geometry.coordinates;
+        return [lat, lng, 1]; // 1 is intensity, you can change based on some property
       });
-  </script>
+
+      const heat = L.heatLayer(heatData, {
+        radius: 25,       // size of each "hot" area
+        blur: 15,         // smoothness
+        maxZoom: 17,
+        gradient: {
+          0.4: 'blue',
+          0.65: 'lime',
+          1: 'red'
+        }
+      }).addTo(map);
+    })
+    .catch(err => {
+      alert("Error loading GeoJSON: " + err);
+      console.error(err);
+    });
+</script>
 </body>
 </html>
