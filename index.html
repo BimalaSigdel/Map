@@ -24,8 +24,10 @@
     const map = L.map('map').setView([27.7, 85.3], 12);
 
     L.tileLayer('https://map-init.gallimap.com/styles/light/{z}/{x}/{y}.png', {
-      attribution: '&copy; Galli Maps'
-    }).addTo(map);
+  attribution: '&copy; Galli Maps',
+  minZoom: 0,
+  maxZoom: 22  
+}).addTo(map);
 
     const markers = L.markerClusterGroup();
 
