@@ -21,12 +21,12 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
   <script>
-    const map = L.map('map',{mazZoom: 20}).setView([27.7, 85.3], 12);
+    const map = L.map('map',{mazZoom: 18}).setView([27.7, 85.3], 12);
 
     L.tileLayer('https://map-init.gallimap.com/styles/light/{z}/{x}/{y}.png', {
   attribution: '&copy; Galli Maps',
   minZoom: 0,
-  maxZoom: 20  
+  maxZoom: 18  
 }).addTo(map);
 
     const markers = L.markerClusterGroup();
